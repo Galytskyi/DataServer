@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 	m_packetBase.load();
 	connect(this, &MainWindow::appendPacket, &m_packetBase, &PacketBase::appendToBase, Qt::QueuedConnection);
 
-	// runServerSocket();
+	// runServerSocket
 	//
 	m_serverSocket.setServerOption(theOptions.server());
 
