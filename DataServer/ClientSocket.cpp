@@ -222,7 +222,7 @@ bool ClientSocket::parseManagedPacket(int requestType, const QByteArray& data)
 			}
 			break;
 
-		case DEVICE_SIGNATURE:
+		case REQUEST_GET_IMAGE:
 			{
 				if (data.size() < sizeof(DeviceRequestGetImage))
 				{

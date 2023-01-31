@@ -443,6 +443,8 @@ void PacketView::onPacketBaseLoaded(const std::vector<DataPacket*>& list_add)
 	m_model.clear();
 	m_model.set(list_add);
 
+	scrollToBottom();
+
 	setCurrentIndex(model()->index(m_model.count() - 1, firstVisibleColumn()));
 	onPacketListCliked(QModelIndex());
 }

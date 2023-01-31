@@ -154,6 +154,11 @@ public slots:
 	void onHeaderContextMenu(QPoint);
 	void onColumnAction(QAction* action);
 
+
+	// slots for first reuest
+	//
+	static void onTimeoutRequestBrightness(PanelDeviceList* pThis, quint64 imei, int brightness);
+
 	// slot of ServerSocket
 	//
 	bool append(DataDevice* pDataDevice);

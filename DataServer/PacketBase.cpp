@@ -158,7 +158,7 @@ PacketBase::PacketBase(QObject *parent)
 
 	 pTable->close();
 
-	 qDebug() << __FUNCTION__ << ": ImgPackets"		<<
+	 qDebug() << __FUNCTION__ << ": DataPackets"	<<
 				 ", Loaded records: " << count()	<<
 				 ", Time for load: " << responseTime.elapsed() << " ms";
 

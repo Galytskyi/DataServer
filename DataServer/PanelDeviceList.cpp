@@ -922,6 +922,20 @@ void PanelDeviceList::onColumnAction(QAction* action)
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void PanelDeviceList::onTimeoutRequestBrightness(PanelDeviceList* pThis, quint64 imei, int brightness)
+{
+	if (pThis == nullptr)
+	{
+		return;
+	}
+
+	QThread::msleep(500);
+
+	emit pThis->requestBrightness(imei, brightness);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 bool PanelDeviceList::append(DataDevice* pDataDevice)
 {
 	if (m_pView == nullptr)
@@ -955,13 +969,14 @@ bool PanelDeviceList::append(DataDevice* pDataDevice)
 			return result;
 		}
 
+		// init params from database
+		//
 		pDataDevice->setLocation(pDeviceParam->location());
 		pDataDevice->setBrightness(pDeviceParam->brightness());
 
 		//
 		//
-		QThread::sleep(2);
-		emit requestBrightness(pDataDevice->imei(), pDataDevice->brightness());
+		QFuture<void> resRun = QtConcurrent::run(PanelDeviceList::onTimeoutRequestBrightness, this, pDataDevice->imei(), pDataDevice->brightness());
 	}
 
 	return result;
