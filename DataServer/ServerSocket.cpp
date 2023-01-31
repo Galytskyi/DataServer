@@ -228,36 +228,36 @@ void ServerSocket::onDeviceStateChanged(quint64 imei)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void ServerSocket::onManagedPacketReceived(DataDevice* pDevice, const QByteArray& data)
+void ServerSocket::onManagedPacketReceived(int requestType, DataDevice* pDataDevice, const QByteArray& data)
 {
-	if (pDevice == nullptr)
+	if (pDataDevice == nullptr)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
 
-	emit managedPacketReceived(pDevice, data);
+	emit managedPacketReceived(requestType, pDataDevice, data);
 }
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void ServerSocket::onDataPacketReceived(DataDevice* pDevice, const QByteArray& data)
+void ServerSocket::onDataPacketReceived(DataDevice* pDataDevice, const QByteArray& data)
 {
-	if (pDevice == nullptr)
+	if (pDataDevice == nullptr)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
 
-	emit dataPacketReceived(pDevice, data);
+	emit dataPacketReceived(pDataDevice, data);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

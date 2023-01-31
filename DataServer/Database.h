@@ -10,7 +10,7 @@
 // ==============================================================================================
 
 #define					DATABASE_NAME		"DataServer"
-#define					DATABASE_VERSION	4
+#define					DATABASE_VERSION	5
 
 // ==============================================================================================
 
@@ -20,6 +20,7 @@ const char* const migration[DATABASE_VERSION] =
 	"ALTER TABLE Devices ADD CoordLongitude VARCHAR(64);",		// 2
 	"ALTER TABLE PicturesInfo ADD Brightness INTEGER;",			// 3
 	"ALTER TABLE PicturesInfo ADD Location VARCHAR(256);",		// 4
+	"ALTER TABLE Devices ADD Brightness INTEGER;",				// 5
 };
 
 // ==============================================================================================

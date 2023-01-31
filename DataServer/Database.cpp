@@ -41,6 +41,7 @@ int SqlFieldBase::init(int objectType, int)
 			append("IMEI",							QMetaType::Long);
 
 			append("Location",						QMetaType::QString, 256);
+			append("Brightness",					QMetaType::Int);
 
 			break;
 
@@ -518,6 +519,7 @@ int SqlTable::read(void* pRecord, int* key, int keyCount)
 
 					pDevice->setImei(query.value(field++).toULongLong());
 					pDevice->setLocation(query.value(field++).toString());
+					pDevice->setBrightness(query.value(field++).toInt());
 				}
 				break;
 
@@ -699,6 +701,7 @@ int SqlTable::write(void* pRecord, int count, int* key)
 
 					query.bindValue(field++, pDevice->imei());
 					query.bindValue(field++, pDevice->location());
+					query.bindValue(field++, pDevice->brightness());
 				}
 				break;
 

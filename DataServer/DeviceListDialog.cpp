@@ -117,6 +117,7 @@ QVariant DeviceListModel::data(const QModelIndex &index, int role) const
 		{
 			case DEVICE_LIST_COLUMN_IMEI:		result = Qt::AlignCenter;	break;
 			case DEVICE_LIST_COLUMN_LOCATION:	result = Qt::AlignCenter;	break;
+			case DEVICE_LIST_COLUMN_BRIGHT:		result = Qt::AlignCenter;	break;
 
 			default:
 				assert(0);
@@ -161,8 +162,9 @@ QString DeviceListModel::text(int row, int column, DeviceParam* pDevice) const
 
 	switch (column)
 	{
-		case DEVICE_LIST_COLUMN_IMEI:		result = pDevice->imeiStr(DEVICE_IMEI_SIZE);	break;
-		case DEVICE_LIST_COLUMN_LOCATION:	result = pDevice->location();					break;
+		case DEVICE_LIST_COLUMN_IMEI:		result = pDevice->imeiStr(DEVICE_IMEI_SIZE);		break;
+		case DEVICE_LIST_COLUMN_LOCATION:	result = pDevice->location();						break;
+		case DEVICE_LIST_COLUMN_BRIGHT:		result = QString::number(pDevice->brightness());	break;
 
 		default:
 			assert(0);
@@ -401,6 +403,8 @@ void DeviceParamDialog::createInterface()
 	locationLayout->addWidget(pLocationLabel);
 	locationLayout->addWidget(m_pLocationEdit);
 
+	//
+	//
 	paramsLayout->addLayout(imeiLayout);
 	paramsLayout->addLayout(locationLayout);
 
@@ -425,15 +429,16 @@ void DeviceParamDialog::createInterface()
 	{
 		m_pImeiEdit->setReadOnly(false);
 		m_pImeiEdit->setDisabled(false);
+
 		m_pImeiEdit->setFocus();
 	}
 	else
 	{
 		m_pImeiEdit->setReadOnly(true);
 		m_pImeiEdit->setDisabled(true);
+
 		m_pLocationEdit->setFocus();
 	}
-
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -738,6 +743,8 @@ void DeviceListDialog::onEdit()
 		QMessageBox::critical(this, tr("Update devices"), tr("Error update devices in database!"));
 		return;
 	}
+
+	emit deviceLocationChanged(pDevice->imei(), pDevice->location());
 }
 
 // -------------------------------------------------------------------------------------------------------------------

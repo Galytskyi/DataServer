@@ -48,7 +48,7 @@ signals:
 
 	void deviceStateChanged(quint64 imei);
 	void deviceReceivingData(quint64 imei);
-	void managedPacketReceived(DataDevice* pDevice, const QByteArray& data);
+	void managedPacketReceived(int requestType, DataDevice* pDevice, const QByteArray& data);
 	void dataPacketReceived(DataDevice* pDevice, const QByteArray& data);
 
 public slots:
@@ -60,8 +60,8 @@ public slots:
 	void onDeviceInfoReceived(ClientSocket* pClientSocket);
 	void onDeviceStateChanged(quint64 imei);
 	void onDeviceReceivingData(quint64 imei);
-	void onManagedPacketReceived(DataDevice* pDevice, const QByteArray& data);
-	void onDataPacketReceived(DataDevice* pDevice, const QByteArray& data);
+	void onManagedPacketReceived(int requestType, DataDevice* pDataDevice, const QByteArray& data);
+	void onDataPacketReceived(DataDevice* pDataDevice, const QByteArray& data);
 
 	void onClientSocketDisconnected();
 };

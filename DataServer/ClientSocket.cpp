@@ -228,9 +228,6 @@ bool ClientSocket::parseManagedPacket(int requestType, const QByteArray& data)
 				{
 					return false;
 				}
-
-				DeviceRequestGetImage request;
-				memcpy(&request, data.data(), sizeof(DeviceRequestGetImage));
 			}
 			break;
 
@@ -240,11 +237,6 @@ bool ClientSocket::parseManagedPacket(int requestType, const QByteArray& data)
 				{
 					return false;
 				}
-
-				DeviceRequestSetParams request;
-				memcpy(&request, data.data(), sizeof(DeviceRequestSetParams));
-
-				m_pDevice->setBrightness(request.brightness);
 			}
 			break;
 
@@ -256,7 +248,7 @@ bool ClientSocket::parseManagedPacket(int requestType, const QByteArray& data)
 
 	// managed packet was received
 	//
-	emit managedPacketReceived(m_pDevice, data);
+	emit managedPacketReceived(requestType, m_pDevice, data);
 	readyParseNextRequest();
 
 	return true;

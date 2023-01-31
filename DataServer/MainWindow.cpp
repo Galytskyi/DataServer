@@ -16,7 +16,6 @@
 #include "Options.h"
 #include "OptionsDialog.h"
 #include "DeviceListDialog.h"
-#include "DeviceSettingDialog.h"
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -360,6 +359,9 @@ void MainWindow::onRemoveImage()
 void MainWindow::onDeviceList()
 {
 	DeviceListDialog dialog(this);
+
+	connect(&dialog, &DeviceListDialog::deviceLocationChanged, m_pDeviceListPanel, &PanelDeviceList::updateLocation, Qt::QueuedConnection);
+
 	if (dialog.exec() != QDialog::Accepted)
 	{
 		return;
@@ -469,14 +471,19 @@ void MainWindow::onDeviceCountChanged(int count)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::onManagedPacketReceived(DataDevice* pDevice, const QByteArray& data)
+void MainWindow::onManagedPacketReceived(int requestType, DataDevice* pDataDevice, const QByteArray& data)
 {
-	if (pDevice == nullptr)
+	if (requestType < 0 || requestType >= DEVICE_REQUEST_COUNT)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice == nullptr)
+	{
+		return;
+	}
+
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
@@ -485,18 +492,59 @@ void MainWindow::onManagedPacketReceived(DataDevice* pDevice, const QByteArray& 
 	{
 		return;
 	}
-}
 
-// -------------------------------------------------------------------------------------------------------------------
-
-void MainWindow::onDataPacketReceived(DataDevice* pDevice, const QByteArray& data)
-{
-	if (pDevice == nullptr)
+	// test requestType
+	//
+	if (requestType != REQUEST_SET_DEVICE_PARAMS)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	// find device by imei
+	//
+	int index = theDeviceBase.find(pDataDevice->imei());
+	if (index == -1)
+	{
+		return;
+	}
+
+	DeviceParam* pDeviceParam = theDeviceBase.device(index);
+	if (pDeviceParam == nullptr)
+	{
+		return;
+	}
+
+	// parse requestType
+	//
+	if (data.size() < sizeof(DeviceRequestSetParams))
+	{
+		return;
+	}
+
+	DeviceRequestSetParams request;
+	memcpy(&request, data.data(), sizeof(DeviceRequestSetParams));
+
+	pDataDevice->setBrightness(request.brightness);
+	pDeviceParam->setBrightness(request.brightness);
+
+	bool result = theDeviceBase.update_db(pDeviceParam);
+	if (result == false)
+	{
+		QMessageBox::critical(this, tr("Update devices"), tr("Error update devices in database!"));
+		return;
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::onDataPacketReceived(DataDevice* pDataDevice, const QByteArray& data)
+{
+	if (pDataDevice == nullptr)
+	{
+		return;
+	}
+
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
@@ -525,8 +573,8 @@ void MainWindow::onDataPacketReceived(DataDevice* pDevice, const QByteArray& dat
 
 	// correct size of bmp
 	//
-	*(int *)&imageBmpData[18] = pDevice->imageWidth();
-	*(int *)&imageBmpData[22] = pDevice->imageHeight();
+	*(int *)&imageBmpData[18] = pDataDevice->imageWidth();
+	*(int *)&imageBmpData[22] = pDataDevice->imageHeight();
 
 	// append data of image
 	//
@@ -551,14 +599,14 @@ void MainWindow::onDataPacketReceived(DataDevice* pDevice, const QByteArray& dat
 	}
 
 	packet->setPacketTime(QDateTime::currentDateTime());
-	packet->setImei(pDevice->imei());
+	packet->setImei(pDataDevice->imei());
 
-	packet->setImageType(pDevice->imageType());
+	packet->setImageType(pDataDevice->imageType());
 	packet->setImageSize(static_cast<int>(imageJpgData.size()));
-	packet->setImageWidth(pDevice->imageWidth());
-	packet->setImageHeight(pDevice->imageHeight());
-	packet->setBrightness(pDevice->brightness());
-	packet->setLocation(pDevice->location());
+	packet->setImageWidth(pDataDevice->imageWidth());
+	packet->setImageHeight(pDataDevice->imageHeight());
+	packet->setBrightness(pDataDevice->brightness());
+	packet->setLocation(pDataDevice->location());
 	packet->setImageData(imageJpgData);
 
 	// append packet to:

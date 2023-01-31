@@ -29,12 +29,16 @@ public:
 	QString location() const { return m_location; }
 	void setLocation(const QString& location) { m_location = location; }
 
+	int brightness() const { return m_brightness; }
+	void setBrightness(int brightness) { m_brightness = brightness; }
+
 private:
 
 	int m_deviceID = -1;											// primary key of record in SQL table
 
 	quint64 m_imei = UNDEFINED_IMEI;
 	QString m_location;
+	int m_brightness = 0;
 };
 
 // ==============================================================================================

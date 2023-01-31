@@ -9,17 +9,20 @@ const char* const			DeviceListColumn[] =
 {
 							QT_TRANSLATE_NOOP("DeviceList.h", "IMEI"),
 							QT_TRANSLATE_NOOP("DeviceList.h", "Location"),
+							QT_TRANSLATE_NOOP("DeviceList.h", "Brightness"),
 };
 
 const int					DEVICE_LIST_COLUMN_COUNT	= sizeof(DeviceListColumn)/sizeof(DeviceListColumn[0]);
 
 const int					DEVICE_LIST_COLUMN_IMEI		= 0,
-							DEVICE_LIST_COLUMN_LOCATION	= 1;
+							DEVICE_LIST_COLUMN_LOCATION	= 1,
+							DEVICE_LIST_COLUMN_BRIGHT	= 2;
 
 const int					DeviceListWidth[DEVICE_LIST_COLUMN_COUNT] =
 {
 							150,	// DEVICE_LIST_COLUMN_IMEI
 							300,	// DEVICE_LIST_COLUMN_LOCATION
+							100,	// DEVICE_LIST_COLUMN_BRIGHT
 };
 
 // ----------------------------------------------------------------------------------------------
@@ -128,6 +131,10 @@ private:
 
 	void createInterface();
 	void createContextMenu();
+
+signals:
+
+	void deviceLocationChanged(quint64 imei, const QString& location);
 
 public slots:
 

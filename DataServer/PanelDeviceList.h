@@ -59,6 +59,7 @@ public:
 	DataDevice* at(int index) const;
 	void remove(quint64 imei);
 	void update(quint64 imei);
+	void updateLocation(quint64 imei, const QString& location);
 
 	void set(const std::vector<DataDevice*>& list_add);
 	void clear();
@@ -155,9 +156,14 @@ public slots:
 
 	// slot of ServerSocket
 	//
-	bool append(DataDevice* pDevice);
+	bool append(DataDevice* pDataDevice);
 	void remove(quint64 imei);
 	void update(quint64 imei);
+
+	// slot of DeviceListDialog
+	//
+	void updateLocation(quint64 imei, const QString& location);
+
 };
 
 // ==============================================================================================

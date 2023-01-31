@@ -138,8 +138,8 @@ private slots:
 	void					onServerStarted();
 	void					onServerStoped();
 	void					onDeviceCountChanged(int count);
-	void					onManagedPacketReceived(DataDevice* pDevice, const QByteArray& data);
-	void					onDataPacketReceived(DataDevice* pDevice, const QByteArray& data);
+	void					onManagedPacketReceived(int requestType, DataDevice* pDataDevice, const QByteArray& data);
+	void					onDataPacketReceived(DataDevice* pDataDevice, const QByteArray& data);
 
 
 	// Slot of PacketView

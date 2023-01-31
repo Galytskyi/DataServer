@@ -295,6 +295,56 @@ void PanelDeviceModel::update(quint64 imei)
 
 // -------------------------------------------------------------------------------------------------------------------
 
+void PanelDeviceModel::updateLocation(quint64 imei, const QString& location)
+{
+	if (imei == UNDEFINED_IMEI)
+	{
+		return;
+	}
+
+	if (location.isEmpty() == true)
+	{
+		return;
+	}
+
+	// update from DeviceList
+	//
+	QMutexLocker locker(&m_deviceMutex);
+
+	auto foundImei = std::find_if(m_deviceList.begin(), m_deviceList.end(), [&imei](DataDevice* pDevice)
+								   {
+									   return pDevice->imei() == imei;
+								   });
+
+	if (foundImei == m_deviceList.end())
+	{
+		return;
+	}
+
+	DataDevice* pDevice = *foundImei;
+	if (pDevice == nullptr)
+	{
+		return;
+	}
+
+	if (pDevice->imei() != imei)
+	{
+		return;
+	}
+
+	pDevice->setLocation(location);
+
+	int index = static_cast<int>(foundImei - m_deviceList.begin());
+	if (index < 0 || index >= m_deviceList.size())
+	{
+		return;
+	}
+
+	updateRow(index);
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 void PanelDeviceModel::set(const std::vector<DataDevice*>& list_add)
 {
 	quint64 count = list_add.size();
@@ -650,20 +700,20 @@ void PanelDeviceList::onRequestBrightness()
 		return;
 	}
 
-	DataDevice* pDevice = m_model.at(index);
-	if (pDevice == nullptr)
+	DataDevice* pDataDevice = m_model.at(index);
+	if (pDataDevice == nullptr)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
 
-	pDevice->setBrightness(brightness);
+	pDataDevice->setBrightness(brightness);
 
-	emit requestBrightness(pDevice->imei(), pDevice->brightness());
+	emit requestBrightness(pDataDevice->imei(), pDataDevice->brightness());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -699,26 +749,26 @@ void PanelDeviceList::onDeviceSetting()
 		return;
 	}
 
-	DataDevice* pDevice = m_model.at(index);
-	if (pDevice == nullptr)
+	DataDevice* pDataDevice = m_model.at(index);
+	if (pDataDevice == nullptr)
 	{
 		return;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return;
 	}
 
-	DeviceSettingDialog dialog(pDevice->brightness(), this);
+	DeviceSettingDialog dialog(pDataDevice->brightness(), this);
 	if (dialog.exec() != QDialog::Accepted)
 	{
 		return;
 	}
 
-	pDevice->setBrightness(dialog.brightness());
+	pDataDevice->setBrightness(dialog.brightness());
 
-	emit requestBrightness(pDevice->imei(), pDevice->brightness());
+	emit requestBrightness(pDataDevice->imei(), pDataDevice->brightness());
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -766,6 +816,12 @@ void PanelDeviceList::onSetLocation()
 	if (index == -1)
 	{
 		pDevice = new DeviceParam(pDataDevice->imei());
+		if (pDevice == nullptr)
+		{
+			return;
+		}
+
+		pDevice->setBrightness(pDataDevice->brightness());
 
 		int indexDB = theDeviceBase.append(pDevice);
 		if (indexDB == -1)
@@ -776,11 +832,10 @@ void PanelDeviceList::onSetLocation()
 	else
 	{
 		pDevice = theDeviceBase.device(index);
-	}
-
-	if (pDevice == nullptr)
-	{
-		return;
+		if (pDevice == nullptr)
+		{
+			return;
+		}
 	}
 
 	DeviceParamDialog dialog(pDevice, this);
@@ -867,31 +922,31 @@ void PanelDeviceList::onColumnAction(QAction* action)
 
 // -------------------------------------------------------------------------------------------------------------------
 
-bool PanelDeviceList::append(DataDevice* pDevice)
+bool PanelDeviceList::append(DataDevice* pDataDevice)
 {
 	if (m_pView == nullptr)
 	{
 		return false;
 	}
 
-	if (pDevice == nullptr)
+	if (pDataDevice == nullptr)
 	{
 		return false;
 	}
 
-	if (pDevice->imei() == UNDEFINED_IMEI)
+	if (pDataDevice->imei() == UNDEFINED_IMEI)
 	{
 		return false;
 	}
 
-	bool result = m_model.append(pDevice);
+	bool result = m_model.append(pDataDevice);
 
 	if (m_model.count() == 1)
 	{
 		m_pView->selectRow(0);
 	}
 
-	int index = theDeviceBase.find(pDevice->imei());
+	int index = theDeviceBase.find(pDataDevice->imei());
 	if (index != -1)
 	{
 		DeviceParam* pDeviceParam = theDeviceBase.device(index);
@@ -900,17 +955,13 @@ bool PanelDeviceList::append(DataDevice* pDevice)
 			return result;
 		}
 
-		if (pDeviceParam->imei() == UNDEFINED_IMEI)
-		{
-			return result;
-		}
+		pDataDevice->setLocation(pDeviceParam->location());
+		pDataDevice->setBrightness(pDeviceParam->brightness());
 
-		if (pDeviceParam->imei() != pDevice->imei())
-		{
-			return result;
-		}
-
-		pDevice->setLocation(pDeviceParam->location());
+		//
+		//
+		QThread::sleep(2);
+		emit requestBrightness(pDataDevice->imei(), pDataDevice->brightness());
 	}
 
 	return result;
@@ -938,6 +989,24 @@ void PanelDeviceList::update(quint64 imei)
 	}
 
 	m_model.update(imei);
+}
+
+
+// -------------------------------------------------------------------------------------------------------------------
+
+void PanelDeviceList::updateLocation(quint64 imei, const QString& location)
+{
+	if (imei == UNDEFINED_IMEI)
+	{
+		return;
+	}
+
+	if (location.isEmpty() == true)
+	{
+		return;
+	}
+
+	m_model.updateLocation(imei, location);
 }
 
 // -------------------------------------------------------------------------------------------------------------------

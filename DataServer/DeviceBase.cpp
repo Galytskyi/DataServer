@@ -38,6 +38,7 @@ void DeviceParam::clear()
 
 	m_imei = UNDEFINED_IMEI;
 	m_location = QT_TRANSLATE_NOOP("DeviceParam", "Unknown");;
+	m_brightness = 0;
 }
 
 // -------------------------------------------------------------------------------------------------------------------

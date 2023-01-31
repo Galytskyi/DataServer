@@ -53,8 +53,8 @@ signals:
 	void deviceInfoReceived(ClientSocket* pClientSocket);
 	void deviceStateChanged(quint64 imei);
 	void deviceReceivingData(quint64 imei);
-	void managedPacketReceived(DataDevice* pDevice, const QByteArray& data);
-	void dataPacketReceived(DataDevice* pDevice, const QByteArray& data);
+	void managedPacketReceived(int requestType, DataDevice* pDataDevice, const QByteArray& data);
+	void dataPacketReceived(DataDevice* pDataDevice, const QByteArray& data);
 
 	void disconnected();
 

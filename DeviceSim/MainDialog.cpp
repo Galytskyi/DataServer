@@ -126,6 +126,9 @@ void MainDialog::socketReadyRead()
 	{
 		case REQUEST_GET_IMAGE:
 			{
+				DeviceRequestGetImage request;
+				memcpy(&request, receivedData.data(), sizeof(DeviceRequestGetImage));
+
 				QFuture<void> resRun = QtConcurrent::run(MainDialog::startSendDataThread, this);
 			}
 			break;
@@ -182,6 +185,7 @@ void MainDialog::cmd_socketSendHeader()
 	for(int i = 0; i < DEVICE_IMEI_SIZE; i++)
 	{
 		di.IMEI[i] = rand() % 10 + '0';
+		//di.IMEI[i] = '1';
 	}
 
 	di.reserv0 = 0;
