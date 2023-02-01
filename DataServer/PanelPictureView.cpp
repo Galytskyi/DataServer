@@ -159,6 +159,7 @@ void PanelPictureView::showPicture(DataPacket packet)
 	m_pixmap = m_pixmap.transformed(QTransform().scale(1, -1));
 
 	m_imageLable->setPixmap(m_pixmap);
+	m_imageLable->setScaledContents(true);
 	m_timeLabel->setText(" " + timeToStr(packet.packetTime()) + " ");
 	m_sizeLabel->setText(QString(" %1 x %2 ").arg(m_pixmap.width()).arg(m_pixmap.height()));
 
