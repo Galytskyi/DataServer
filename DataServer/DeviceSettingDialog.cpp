@@ -34,13 +34,13 @@ bool DeviceSettingDialog::createInterface()
 
 	QLabel* brightnessLabel = new QLabel(tr("Brightness"), this);
 	brightnessLabelLayout->addWidget(brightnessLabel);
-	QVBoxLayout *brightnessEditLayout = new QVBoxLayout;
 
+	QVBoxLayout *brightnessEditLayout = new QVBoxLayout;
 	m_brightnessSpinBox = new QSpinBox(this);
 	m_brightnessSpinBox->setMinimum(0);
-	m_brightnessSpinBox->setMaximum(255);
+	m_brightnessSpinBox->setMaximum(100);
 	m_brightnessSpinBox->setSingleStep(1);
-	m_brightnessSpinBox->setValue(m_brightness);
+	m_brightnessSpinBox->setValue(round(static_cast<double>(m_brightness) / 255.0 * 100.0));
 	brightnessEditLayout->addWidget(m_brightnessSpinBox);
 
 	QHBoxLayout *brightnessLayout = new QHBoxLayout;
@@ -74,14 +74,14 @@ void DeviceSettingDialog::onOk()
 {
 	// brightness
 	//
-	int brightness = m_brightnessSpinBox->value();
-	if (brightness < 0 || brightness > 255)
+	double brightness = static_cast<double>(m_brightnessSpinBox->value());
+	if (brightness < 0 || brightness > 100)
 	{
-		QMessageBox::critical(nullptr, windowTitle(), tr("Field brightness is wrong: %1\nRange: 0 .. 255").arg(brightness));
+		QMessageBox::critical(nullptr, windowTitle(), tr("Field brightness is wrong: %1\nRange: 0 .. 100 %").arg(brightness));
 		return;
 	}
 
-	m_brightness = brightness;
+	m_brightness = static_cast<int> (round(brightness * 255.0 / 100.0));
 
 	//
 	//

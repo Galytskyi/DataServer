@@ -58,6 +58,15 @@ QString DataDevice::imeiStr(int digits) const
 
 // -------------------------------------------------------------------------------------------------------------------
 
+QString DataDevice::brightnessStr() const
+{
+	double result = round(static_cast<double>(m_di.brightness) / 255.0 * 100.0);
+
+	return QString::number(result, 'f', 0) + " %";
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 QString DataDevice::stateStr() const
 {
 	QString result;

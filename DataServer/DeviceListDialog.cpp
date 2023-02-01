@@ -164,7 +164,7 @@ QString DeviceListModel::text(int row, int column, DeviceParam* pDevice) const
 	{
 		case DEVICE_LIST_COLUMN_IMEI:		result = pDevice->imeiStr(DEVICE_IMEI_SIZE);		break;
 		case DEVICE_LIST_COLUMN_LOCATION:	result = pDevice->location();						break;
-		case DEVICE_LIST_COLUMN_BRIGHT:		result = QString::number(pDevice->brightness());	break;
+		case DEVICE_LIST_COLUMN_BRIGHT:		result = pDevice->brightnessStr();					break;
 
 		default:
 			assert(0);

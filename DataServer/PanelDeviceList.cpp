@@ -171,7 +171,7 @@ QString PanelDeviceModel::text(int row, int column, DataDevice* pDevice) const
 		case PANEL_DEVICE_LIST_COLUMN_LOCATION:	result = pDevice->location();								break;
 		case PANEL_DEVICE_LIST_COLUMN_IP:		result = pDevice->ip();										break;
 		case PANEL_DEVICE_LIST_COLUMN_TIME:		result = timeToStr(pDevice->connectTime());					break;
-		case PANEL_DEVICE_LIST_COLUMN_BRIGHT:	result = QString::number(pDevice->brightness());			break;
+		case PANEL_DEVICE_LIST_COLUMN_BRIGHT:	result = pDevice->brightnessStr();							break;
 		case PANEL_DEVICE_LIST_COLUMN_STATE:	result = pDevice->stateStr();								break;
 
 		default:
@@ -638,13 +638,18 @@ void PanelDeviceList::onRequestPicture()
 
 void PanelDeviceList::onRequestBrightness()
 {
+	if (m_pView == nullptr)
+	{
+		return;
+	}
+
 	QAction* action = dynamic_cast<QAction*>(sender());
 	if (action == nullptr)
 	{
 		return ;
 	}
 
-	int brightness = 128;
+	double brightness = 50;
 
 	if (action == m_pRequestBrightness000Action)
 	{
@@ -653,27 +658,22 @@ void PanelDeviceList::onRequestBrightness()
 
 	if (action == m_pRequestBrightness025Action)
 	{
-		brightness = 64;
+		brightness = 25;
 	}
 
 	if (action == m_pRequestBrightness050Action)
 	{
-		brightness = 128;
+		brightness = 50;
 	}
 
 	if (action == m_pRequestBrightness075Action)
 	{
-		brightness = 192;
+		brightness = 75;
 	}
 
 	if (action == m_pRequestBrightness100Action)
 	{
-		brightness = 255;
-	}
-
-	if (m_pView == nullptr)
-	{
-		return;
+		brightness = 100;
 	}
 
 	const QModelIndexList selectedList = m_pView->selectionModel()->selectedRows();
@@ -711,7 +711,7 @@ void PanelDeviceList::onRequestBrightness()
 		return;
 	}
 
-	pDataDevice->setBrightness(brightness);
+	pDataDevice->setBrightness(static_cast<int> (round(brightness * 255.0 / 100.0)));
 
 	emit requestBrightness(pDataDevice->imei(), pDataDevice->brightness());
 }

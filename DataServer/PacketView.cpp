@@ -141,7 +141,7 @@ QString PacketModel::text(int row, int column, DataPacket* pPacket) const
 		case PACKET_VIEW_COLUMN_IMEI:		result = pPacket->imeiStr(theOptions.imei().imeiDigits());	break;
 		case PACKET_VIEW_COLUMN_LOCATION:	result = pPacket->location();								break;
 		case PACKET_VIEW_COLUMN_TIME:		result = timeToStr(pPacket->packetTime());					break;
-		case PACKET_VIEW_COLUMN_BRIGHT:		result = QString::number(pPacket->brightness());			break;
+		case PACKET_VIEW_COLUMN_BRIGHT:		result = pPacket->brightnessStr();							break;
 		case PACKET_VIEW_COLUMN_SIZE:		result = QString::number(pPacket->imageSize());				break;
 
 		default:

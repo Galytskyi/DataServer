@@ -66,6 +66,7 @@ public:
 	void setImageHeight(int height) { m_di.imageHeight = height; }
 
 	int brightness() const { return m_di.brightness; }
+	QString brightnessStr() const;
 	void setBrightness(int brightness) { m_di.brightness = brightness; }
 
 	DataDeviceState state() const { return m_state; }

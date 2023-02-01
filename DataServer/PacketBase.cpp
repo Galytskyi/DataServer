@@ -50,27 +50,14 @@ QString DataPacket::imeiStr(int digits) const
 	return QString::number(m_IMEI).right(digits);
 }
 
-
 // -------------------------------------------------------------------------------------------------------------------
 
-//DataPacket& DataPacket::operator=(DataPacket& from)
-//{
-//	m_packetID = from.m_packetID;
-//	m_IMEI = from.m_IMEI;
+QString DataPacket::brightnessStr() const
+{
+	double result = round(static_cast<double>(m_brightness) / 255.0 * 100.0);
 
-//	m_packetTime = from.m_packetTime;
-
-//	m_imageType = from.m_imageType;
-//	m_imageSize = from.m_imageSize;
-//	m_imageWidth = from.m_imageWidth;
-//	m_imageHeight = from.m_imageHeight;
-
-//	m_brightness = from.m_brightness;
-
-//	m_imageData = from.m_imageData;
-
-//	return *this;
-//}
+	return QString::number(result, 'f', 0) + " %";
+}
 
 // -------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------

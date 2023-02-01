@@ -71,6 +71,7 @@ public:
 	void setImageHeight(int height) { m_imageHeight = height; }
 
 	int brightness() const { return m_brightness; }
+	QString brightnessStr() const;
 	void setBrightness(int brightness) { m_brightness = brightness; }
 
 	QString location() const { return m_location; }

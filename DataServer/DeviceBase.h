@@ -30,6 +30,7 @@ public:
 	void setLocation(const QString& location) { m_location = location; }
 
 	int brightness() const { return m_brightness; }
+	QString brightnessStr() const;
 	void setBrightness(int brightness) { m_brightness = brightness; }
 
 private:
